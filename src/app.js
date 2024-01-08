@@ -20,4 +20,8 @@ app.use(express.static("public"))
 
 app.use(cookieParser())
 
+import registerUser from "./routes/user.routes.js"
+
+app.use("/api/v1/users", registerUser)
+
 export {app}
