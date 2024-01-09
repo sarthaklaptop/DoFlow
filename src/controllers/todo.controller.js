@@ -33,7 +33,7 @@ const createTodo = asyncHandler ( async (req, res) => {
 
     const createdTodo = await Todo.findById(todo?._id)
 
-    console.log(createdTodo)
+    // console.log(createdTodo)
 
     await User.findByIdAndUpdate(
         userId,
@@ -45,11 +45,61 @@ const createTodo = asyncHandler ( async (req, res) => {
     .json( new ApiResponse(200, createTodo, "Todo Created Successfully"))
 })
 
-// get all todos
 // update todo
+const updateTodo = asyncHandler ( async (req, res) => {    
+    const {title, description} = req.body
+
+    if(!title || !description) {
+        throw new ApiError(401, "All fields are required")
+    }
+    
+    const todoId = await req.params._id
+    
+    console.log("Printing todo in update",todoId)
+
+    const updatedTodo = await Todo.findByIdAndUpdate(
+        todoId,
+        {
+            // this $set will update given fields to new fields 
+            $set: {
+                title,
+                description
+            }
+        },
+        {new:true}
+    )
+
+    console.log("Printing updated todo")
+    // console.log(updateTodo)
+
+    return res
+    .status(200)
+    .json( new ApiResponse(200, updateTodo, "Todo Updated Successfully"))
+})  
+
+
 // delete todo
+
+const deleteTodo = asyncHandler ( async (req, res) => {
+    // get todo id
+    const todoId = await req.params._id
+
+    console.log(todoId)
+    // match id from bd
+
+    const deleteTodo = await Todo.findByIdAndDelete(todoId, {new: true})
+    // delete todo
+
+    // return response
+    return res
+    .status(200)
+    .json( new ApiResponse(200, {deleteTodo}, "Todo Deleted Successfully"))
+})
+// get all todos
 
 
 export {
-    createTodo
+    createTodo,
+    updateTodo,
+    deleteTodo
 }
