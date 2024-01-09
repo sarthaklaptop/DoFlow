@@ -95,11 +95,42 @@ const deleteTodo = asyncHandler ( async (req, res) => {
     .status(200)
     .json( new ApiResponse(200, {deleteTodo}, "Todo Deleted Successfully"))
 })
-// get all todos
 
+// get all todos
+const getAllTodos = asyncHandler ( async (req, res) => {
+    // get the user of which todo you want to get
+    const userId = req.user?._id;
+
+    console.log(userId)
+
+    // get todos
+    const user = await User.findById( userId ).populate('todo').select(
+        "-password -refreshToken -avatar -_id -firstName -lastName"
+    )
+
+    // console.log(user)
+
+    if(!user){
+        throw new ApiError(404, 'User not found');
+    }
+
+    // const userTodos = user;
+
+    // console.log(updateTodo)
+
+
+    // return response
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Todos Retrieved Successfully"));
+
+
+})
 
 export {
     createTodo,
     updateTodo,
-    deleteTodo
+    deleteTodo,
+    getAllTodos
 }
